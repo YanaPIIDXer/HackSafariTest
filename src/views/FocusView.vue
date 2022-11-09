@@ -13,21 +13,24 @@
  * ・厳密には、フォーカス自体は合っている
  * ・ソフトウェアキーボードが表示されないだけ
  * ・その為、iOS等のスマホ・タブレット端末限定の問題となる
+ * ・基本的にはclickイベント等focusが機能するイベントさえ介していれば正常動作する
+ * 　が、documentのdblclickイベントをpreventDefaultしてダブルクリックによるズームを封印する処理を入れていたら問題が起こる（職場がコレ）
+ *   と言うよりpreventDefaultは関係なく、documentのdblclickイベントに何かしらトリガーしてたらアウト。
+ * 
+ * ～結論～
+ * ・documentをwindowに切り替えるとよい
  */
 
-import { ref } from "vue"
+import { ref, onMounted, onBeforeUnmount } from "vue"
 import type { Ref } from "vue"
 
 const inputRef: Ref<HTMLInputElement | undefined> = ref()
-const isDisplay = ref(false)
 
 /**
  * フォーカスを合わせる
  */
 const focus = async () => {
   if (!inputRef.value) { return }
-
-  isDisplay.value = true
   inputRef.value.focus()
 }
 
@@ -39,40 +42,50 @@ const smartImplementDoubleclick = (e: Event) => {
   e.target?.addEventListener("click", focus)
   setTimeout(() => {
     e.target?.removeEventListener("click", focus)
-  }, 500)
+  }, 250)
 }
+
+/**
+ * ダブルタップによるズームを抑制
+ * ※諸悪の根源
+ */
+const ignoreDoubleTap = (e: Event) => {
+  e.preventDefault()
+}
+
+onMounted(() => {
+  // ↓死ぬ
+  //document.addEventListener("dblclick", ignoreDoubleTap)
+  // ↓OK
+  window.addEventListener("dblclick", ignoreDoubleTap)
+})
+onBeforeUnmount(() => {
+  //document.removeEventListener("dblclick", ignoreDoubleTap)
+  window.removeEventListener("dblclick", ignoreDoubleTap)
+})
 </script>
 
 <template lang="pug">
 div
   .root
     .title ダブルクリックによるfocus()実行
-    .svg
-      svg(width="100" height="100")
-        foreignObject(width="100" height="100")
-          textarea(ref="inputRef" width="100" height="100" @focusout="isDisplay = false")
-        rect(
-          x="0"
-          y="0"
-          width="100"
-          height="100"
-          style="background: #000000"
-          :style="{ display: !isDisplay ? 'inline' : 'none' }"
-          @click="smartImplementDoubleclick"
-        )
+    .target
+      input(ref="inputRef" type="text")
+    .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
+    .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
+    .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
 </template>
 
 <style lang="sass" scoped>
 .root
   width: 100%
   height: 100%
-  user-select: none
   
   .title
     text-align: center
     font-size: 18px
 
-  .svg
+  .target
     width: fit-content
     margin: 0 auto
 
