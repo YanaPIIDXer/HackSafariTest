@@ -19,12 +19,15 @@ import { ref } from "vue"
 import type { Ref } from "vue"
 
 const inputRef: Ref<HTMLInputElement | undefined> = ref()
+const isDisplay = ref(false)
 
 /**
  * フォーカスを合わせる
  */
 const focus = async () => {
   if (!inputRef.value) { return }
+
+  isDisplay.value = true
   inputRef.value.focus()
 }
 
@@ -45,7 +48,8 @@ div
   .root
     .title ダブルクリックによるfocus()実行
     .target
-      input(ref="inputRef" type="text")
+      input(ref="inputRef" type="text" @focusout="isDisplay = false")
+      .overlay(:style="{ display: !isDisplay ? 'block' : 'none' }")
     .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
     .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
     .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
@@ -61,8 +65,17 @@ div
     font-size: 18px
 
   .target
+    position: relative
     width: fit-content
     margin: 0 auto
+
+    .overlay
+      position: absolute
+      left: 0
+      top: 0
+      width: 100%
+      height: 100%
+      background: #000000
 
   .area
     width: 95vw
