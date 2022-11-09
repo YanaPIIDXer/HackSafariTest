@@ -47,9 +47,10 @@ const smartImplementDoubleclick = (e: Event) => {
 div
   .root
     .title ダブルクリックによるfocus()実行
-    .target
-      input(ref="inputRef" type="text" @focusout="isDisplay = false")
-      .overlay(:style="{ display: !isDisplay ? 'block' : 'none' }")
+    svg(width="100" height="100")
+      foreignObject(width="100" height="100")
+        textarea(ref="inputRef" width="100" height="100" @focusout="isDisplay = false")
+      rect(x="0" y="0" width="100" height="100" style="background: #000000" :style="{ display: !isDisplay ? 'inline' : 'none' }")
     .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
     .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
     .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
@@ -63,19 +64,6 @@ div
   .title
     text-align: center
     font-size: 18px
-
-  .target
-    position: relative
-    width: fit-content
-    margin: 0 auto
-
-    .overlay
-      position: absolute
-      left: 0
-      top: 0
-      width: 100%
-      height: 100%
-      background: #000000
 
   .area
     width: 95vw
