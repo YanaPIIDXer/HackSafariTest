@@ -15,7 +15,7 @@
  * ・その為、iOS等のスマホ・タブレット端末限定の問題となる
  */
 
-import { ref, type Ref, nextTick } from "vue"
+import { ref, type Ref } from "vue"
 
 const inputRef: Ref<HTMLInputElement | undefined> = ref()
 
