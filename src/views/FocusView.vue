@@ -1,13 +1,18 @@
 <script setup lang="ts">
 /**
- *        ～このViewで取り扱う問題～
+ * ～このViewで取り扱う問題～
  * 特定の要素にフォーカスを移すためのfocusメソッドが、
  * Safariだと特定のイベント内でないと機能しない
  * 
- *             ～問題の設定～
- *    特定の要素をダブルクリックした時に
- *    特定の要素に対してフォーカスを合わせる
- *    ※dblclickイベント内ではfocus使用不可
+ * ～問題の設定～
+ * 特定の要素をダブルクリックした時に
+ * 特定の要素に対してフォーカスを合わせる
+ * ※dblclickイベント内ではfocus使用不可
+ * 
+ * ～調査内容～
+ * ・厳密には、フォーカス自体は合っている
+ * ・ソフトウェアキーボードが表示されないだけ
+ * ・その為、iOS等のスマホ・タブレット端末限定の問題となる
  */
 
 import { ref, type Ref, nextTick } from "vue"
@@ -15,14 +20,10 @@ import { ref, type Ref, nextTick } from "vue"
 const inputRef: Ref<HTMLInputElement | undefined> = ref()
 
 /**
- * ダブルクリックされた
+ * フォーカスを合わせる
  */
-const onDoubleClick = async () => {
+const focus = async () => {
   if (!inputRef.value) { return }
-  
-  /**
-   * Safariでの挙動：フォーカスは合うが、ソフトウェアキーボードが表示されない
-   */
   inputRef.value.focus()
 }
 </script>
@@ -33,7 +34,8 @@ div
     .title ダブルクリックによるfocus()実行
     .target
       input(ref="inputRef" type="text")
-    .area(@dblclick="onDoubleClick") dblclick
+    .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
+    .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
 </template>
 
 <style lang="sass" scoped>
