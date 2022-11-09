@@ -32,23 +32,25 @@ const autoFocusOut = (e: Event) => {
   }, 1000)
 }
 
-const ignoreScroll = (e: Event) => {
+const ignoreEvent = (e: Event) => {
   e.preventDefault()
 }
 
 onMounted(() => {
   window.addEventListener("resize", onResize)
+  document.addEventListener("dblclick", ignoreEvent)
   onResize()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", onResize)
+  document.removeEventListener("dblclick", ignoreEvent)
 })
 </script>
 
 <template lang="pug">
 div
-  .root(@touchmove="ignoreScroll")
+  .root(@touchmove="ignoreEvent")
     .title ソフトウェアキーボードがレイアウトを壊す
     .target(:style="{ width: `${width}px`, height: `${height}px` }")
     textarea.textarea(@focus="autoFocusOut")
