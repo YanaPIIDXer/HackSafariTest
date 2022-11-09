@@ -15,7 +15,8 @@
  * ・その為、iOS等のスマホ・タブレット端末限定の問題となる
  */
 
-import { ref, type Ref } from "vue"
+import { ref } from "vue"
+import type { Ref } from "vue"
 
 const inputRef: Ref<HTMLInputElement | undefined> = ref()
 
@@ -25,6 +26,17 @@ const inputRef: Ref<HTMLInputElement | undefined> = ref()
 const focus = async () => {
   if (!inputRef.value) { return }
   inputRef.value.focus()
+}
+
+/**
+ * dblclickイベントを使わないダブルクリック
+ * 賢い実装
+ */
+const smartImplementDoubleclick = (e: Event) => {
+  e.target?.addEventListener("click", focus)
+  setTimeout(() => {
+    e.target?.removeEventListener("click", focus)
+  }, 250)
 }
 </script>
 
@@ -36,6 +48,7 @@ div
       input(ref="inputRef" type="text")
     .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
     .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
+    .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
 </template>
 
 <style lang="sass" scoped>
