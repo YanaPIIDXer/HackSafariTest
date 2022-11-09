@@ -8,6 +8,9 @@
  * 　→vhの高さが変動する？
  * ・ソフトウェアキーボードが消えても1vh毎のサイズは元には戻らないし、スクロールで元に戻る事もない
  * ・この時touchmoveでpreventDefaultしてスワイプによるスクロールを抑制していると、当然画面外に飛んだ要素は帰ってこなくなる
+ * 
+ * ～結論～
+ * そもそもvhなんか使うな
  */
 import { ref, onMounted, onBeforeUnmount } from "vue"
 
@@ -58,6 +61,7 @@ div
 
 <style lang="sass" scoped>
 .root
+  position: absolute
   width: 100vw
   height: 100vh
   
@@ -70,8 +74,6 @@ div
     margin: 0 auto
 
   .textarea
-    position: absolute
-    bottom: 0
     width: 100%
     font-size: 17px
 </style>
