@@ -18,9 +18,6 @@
  *   と言うよりpreventDefaultは関係なく、documentのdblclickイベントに何かしらトリガーしてたらアウト。
  * 
  * ～結論～
- * ・documentをwindowに切り替えるとよい
- * ・と言うかそもそもダブルタップによるズーム自体起きていない気がする
- * 　（ズーム状態でダブルタップするとズームアウトはするが、ピンチ操作によるズーム処理も同じく抑制しているので、結果的にこの処理自体そもそも必要なし）
  */
 
 import { ref, onMounted, onBeforeUnmount } from "vue"
@@ -56,14 +53,10 @@ const ignoreDoubleTap = (e: Event) => {
 }
 
 onMounted(() => {
-  // ↓死ぬ
-  //document.addEventListener("dblclick", ignoreDoubleTap)
-  // ↓OK
-  window.addEventListener("dblclick", ignoreDoubleTap)
+  document.addEventListener("dblclick", ignoreDoubleTap)
 })
 onBeforeUnmount(() => {
-  //document.removeEventListener("dblclick", ignoreDoubleTap)
-  window.removeEventListener("dblclick", ignoreDoubleTap)
+  document.removeEventListener("dblclick", ignoreDoubleTap)
 })
 </script>
 
@@ -73,7 +66,8 @@ div
     .title ダブルクリックによるfocus()実行
     .target
       input(ref="inputRef" type="text")
-    .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
+    .scaleArea ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />
+    .area(@dblclick="focus") dblnpm run click: フォーカスは合うがソフトウェアキーボードが表示されない
     .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
     .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
 </template>
@@ -86,6 +80,11 @@ div
   .title
     text-align: center
     font-size: 18px
+
+  .scaleArea
+    width: 256px
+    height: 256px
+    background: #FF00FF
 
   .target
     width: fit-content
