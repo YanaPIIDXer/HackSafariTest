@@ -8,6 +8,10 @@ const routes = [
   { name: "root", path: routePaths.root, component: () => import("@/views/RootView.vue") },
 ]
 
+export const tabItems = routes.map(route => {
+  return { label: route.name, to: route.path }
+})
+
 const option = {
   history: createWebHistory(),
   routes,
