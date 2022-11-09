@@ -39,7 +39,7 @@ const smartImplementDoubleclick = (e: Event) => {
   e.target?.addEventListener("click", focus)
   setTimeout(() => {
     e.target?.removeEventListener("click", focus)
-  }, 250)
+  }, 500)
 }
 </script>
 
@@ -47,23 +47,34 @@ const smartImplementDoubleclick = (e: Event) => {
 div
   .root
     .title ダブルクリックによるfocus()実行
-    svg(width="100" height="100")
-      foreignObject(width="100" height="100")
-        textarea(ref="inputRef" width="100" height="100" @focusout="isDisplay = false")
-      rect(x="0" y="0" width="100" height="100" style="background: #000000" :style="{ display: !isDisplay ? 'inline' : 'none' }")
-    .area(@dblclick="focus") dblclick: フォーカスは合うがソフトウェアキーボードが表示されない
-    .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
-    .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
+    .svg
+      svg(width="100" height="100")
+        foreignObject(width="100" height="100")
+          textarea(ref="inputRef" width="100" height="100" @focusout="isDisplay = false")
+        rect(
+          x="0"
+          y="0"
+          width="100"
+          height="100"
+          style="background: #000000"
+          :style="{ display: !isDisplay ? 'inline' : 'none' }"
+          @click="smartImplementDoubleclick"
+        )
 </template>
 
 <style lang="sass" scoped>
 .root
   width: 100%
   height: 100%
+  user-select: none
   
   .title
     text-align: center
     font-size: 18px
+
+  .svg
+    width: fit-content
+    margin: 0 auto
 
   .area
     width: 95vw
