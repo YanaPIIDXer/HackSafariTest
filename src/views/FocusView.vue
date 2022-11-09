@@ -29,7 +29,7 @@ const inputRef: Ref<HTMLInputElement | undefined> = ref()
 /**
  * フォーカスを合わせる
  */
-const focus = async () => {
+const focus = () => {
   if (!inputRef.value) { return }
   inputRef.value.focus()
 }
