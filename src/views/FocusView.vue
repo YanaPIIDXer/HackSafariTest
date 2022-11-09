@@ -18,6 +18,7 @@
  *   と言うよりpreventDefaultは関係なく、documentのdblclickイベントに何かしらトリガーしてたらアウト。
  * 
  * ～結論～
+ * document.dblclickに何かをトリガーしたらダメ
  */
 
 import { ref, onMounted, onBeforeUnmount } from "vue"
@@ -45,6 +46,21 @@ const smartImplementDoubleclick = (e: Event) => {
 }
 
 /**
+ * dblclickイベントを使わないダブルクリック
+ * 愚直な実装
+ */
+let flg = false
+const dirtyImplementDoubleClick = () => {
+  if (flg) {
+    focus()
+    flg = false
+    return
+  }
+  flg = true
+  setTimeout(() => { flg = false}, 250)
+}
+
+/**
  * ダブルタップによるズームを抑制
  * ※諸悪の根源
  */
@@ -53,7 +69,7 @@ const ignoreDoubleTap = (e: Event) => {
 }
 
 onMounted(() => {
-  document.addEventListener("dblclick", ignoreDoubleTap)
+  document.addEventListener("dblclick", ignoreDoubleTap, { passive: false })
 })
 onBeforeUnmount(() => {
   document.removeEventListener("dblclick", ignoreDoubleTap)
@@ -67,9 +83,10 @@ div
     .target
       input(ref="inputRef" type="text")
     .scaleArea ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />ここをダブルタップすると拡大する<br />
-    .area(@dblclick="focus") dblnpm run click: フォーカスは合うがソフトウェアキーボードが表示されない
-    .area(@click="focus") click: フォーカスが合い、ソフトウェアキーボードが表示される
-    .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）: フォーカスが合い、ソフトウェアキーボードが表示される
+    .area(@dblclick="focus") dblclick
+    .area(@click="focus") click
+    .area(@click="smartImplementDoubleclick") clickイベント2回発火によるダブルクリック（スマート実装）
+    .area(@click="dirtyImplementDoubleClick") clickイベント2回発火によるダブルクリック（愚直実装）
 </template>
 
 <style lang="sass" scoped>
