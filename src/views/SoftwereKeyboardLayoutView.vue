@@ -9,10 +9,10 @@
  * ・ソフトウェアキーボードが消えても1vh毎のサイズは元には戻らないし、スクロールで元に戻る事もない
  * ・この時touchmoveでpreventDefaultしてスワイプによるスクロールを抑制していると、当然画面外に飛んだ要素は帰ってこなくなる
  * 
- * ～結論～
- * そもそもvhなんか使うな
+ * ～対処～
+ * windowのscrollイベントが走った時、window.scroll(0, 0)を実行してやればよい
  */
-import { ref, onMounted, onBeforeUnmount } from "vue"
+import { ref, onMounted, onBeforeUnmount, watch } from "vue"
 
 const width = ref(100)
 const height = ref(100)
@@ -35,19 +35,31 @@ const autoFocusOut = (e: Event) => {
   }, 1000)
 }
 
+/**
+ * イベントの抑制
+ */
 const ignoreEvent = (e: Event) => {
   e.preventDefault()
+}
+
+/**
+ * スクロールの抑制
+ */
+const ignoreScroll = () => {
+  window.scroll(0, 0)
 }
 
 onMounted(() => {
   window.addEventListener("resize", onResize)
   document.addEventListener("dblclick", ignoreEvent)
   onResize()
+  window.addEventListener("scroll", ignoreScroll)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", onResize)
   document.removeEventListener("dblclick", ignoreEvent)
+  window.removeEventListener("scroll", ignoreScroll)
 })
 </script>
 
@@ -56,12 +68,13 @@ div
   .root(@touchmove="ignoreEvent")
     .title ソフトウェアキーボードがレイアウトを壊す
     .target(:style="{ width: `${width}px`, height: `${height}px` }")
+    span {{ rootWidth }} x {{ rootHeight }}
     textarea.textarea(@focus="autoFocusOut")
 </template>
 
 <style lang="sass" scoped>
 .root
-  position: absolute
+  background: #FFFF00
   width: 100vw
   height: 100vh
   
