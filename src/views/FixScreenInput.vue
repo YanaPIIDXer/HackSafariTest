@@ -13,7 +13,7 @@ div
     .title inputにフォーカスを当てた時のスクロール・ズームを抑制
     PrimeButton フォーカスを外す
     textarea.rawInput(style="left: 200px; top: 400px" placeholder="スクロールもズームも発生する")
-    HackTextArea.hackInput(style="left: 350px; top: 200px" placeholder="画面固定")
+    HackTextArea.hackInput(style="left: 350px; top: 200px" placeholder="画面固定" :font-size="24")
 </template>
 
 <style lang="sass" scoped>
@@ -33,5 +33,4 @@ div
 
   .hackInput
     position: absolute
-    font-size: 24px
 </style>
